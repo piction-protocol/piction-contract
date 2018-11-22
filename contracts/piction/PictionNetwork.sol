@@ -167,8 +167,32 @@ contract PictionNetwork is IProxy, IPictionNetwork, Ownable, ValidValue{
         emit AddCouncils(msg.sender, _council, councils.length);
     }
 
+    /**
+     * @dev contents distributor 수수료 비율 설정
+     *
+     * @param _rate 비율(bignumber)
+     */
+    function setConctentsDistributorRate(uint256 _rate) external onlyOwner {
+        cdRate = _rate;
+
+        emit SetContentsDistributorRate(msg.sender, _rate);
+    }
+
+    /**
+     * @dev pixel distributor contract 주소 등록
+     *
+     * @param _pixelDistributor 컨트렉트 주소
+     */
+    function setPixelDistributor(address _pixelDistributor) external onlyOwner validAddress(_pixelDistributor){
+        distributor = _pixelDistributor;
+
+        emit SetPixelDistributor(msg.sender, _pixelDistributor);
+    }
+
     event AddUser(address indexed _sender, address indexed _user);
     event AddContents(address indexed _sender, address indexed _contents);
     event AddContentsDistributor(address indexed _sender, address indexed _contentsDistributor, uint256 _count);
     event AddCouncils(address indexed _sender, address indexed _council, uint256 _count);
+    event SetContentsDistributorRate(address indexed _sender, uint256 _rate);
+    event SetPixelDistributor(address indexed _sender, address _pixelDistributor);
 }
