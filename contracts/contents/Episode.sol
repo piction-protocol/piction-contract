@@ -41,7 +41,7 @@ contract Episode is Hashable, IEpisode {
 
         price = _price;
         images = _images;
-        publishedTo = _publishedTo;
+        publishedTo = (TimeLib.currentTime() > _publishedTo)? TimeLib.currentTime() : _publishedTo;
 
         piction = _piction;
         
