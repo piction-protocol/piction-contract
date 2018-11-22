@@ -7,7 +7,7 @@ import "contracts/interface/IPictionNetwork.sol";
 
 import "contracts/utils/ValidValue.sol";
 
-contract PictionNetwork is IProxy, IPictionNetwork, Ownable, ValidValue{
+contract PictionNetwork is IProxy, Ownable, IPictionNetwork, ValidValue{
 
     mapping(address => bool) users;         // piction network에 등록한 유저 지갑 주소
     mapping(address => bool) contents;      // piction network에 등록한 콘텐츠 컨트렉트 주소

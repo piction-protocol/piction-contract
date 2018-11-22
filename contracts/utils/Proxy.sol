@@ -1,10 +1,12 @@
 pragma solidity ^0.4.24;
 
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+
 import "contracts/interface/IProxy.sol";
 
-contract Proxy is IProxy {
+contract Proxy is IProxy, Ownable {
 
-    function setTargetAddress(address _address) public {
+    function setTargetAddress(address _address) public onlyOwner {
         require(_address != address(0));
         targetAddress = _address;
     }
