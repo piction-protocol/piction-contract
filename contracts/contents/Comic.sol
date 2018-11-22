@@ -44,7 +44,7 @@ contract Comic is Hashable {
      * @return episode_ index에 해당하는 episode 주소
      */
     function getEpisode(uint256 _index) public view returns(address episode_) {
-        if(episodes.length <= _index) {
+        if(episodes.length >= _index) {
             episode_ = episodes[_index];
         }
         return episode_;
