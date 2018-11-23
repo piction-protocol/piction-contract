@@ -160,6 +160,24 @@ contract Episode is Hashable, IEpisode {
     }
 
     /**
+     * @dev 에피소드 이미지 순서변경
+     *
+     * @param _oldOrder 변경될 이미지 index
+     * @param _newOrder 변경하고 싶은 이미지 index
+     */
+    function changeImageOrder(uint256 _oldOrder, uint256 _newOrder) public onlyOwner {
+        require(_oldOrder < images.length, "Out of index: check oldOrder");
+        require(_newOrder < images.length, "Out of index: check newOrder");
+        require(_oldOrder != _newOrder, "Failed to change image order: Check the index");
+
+        bytes16 temp = images[_oldOrder];
+        images[_oldOrder] = images[_newOrder];
+        images[_newOrder] = temp;
+
+        emit ChangeImageOrder(msg.sender, _oldOrder, _newOrder);
+    }
+
+    /**
      * @dev 에피소드 구매 유저 기록
      *
      * @notice 변경하고자하는 시간이 현재시간보다 클때만 변경 가능
@@ -184,4 +202,5 @@ contract Episode is Hashable, IEpisode {
     event ChangeReleaseDate(address indexed _user, uint256 _before, uint256 _after);
     event ChangeImages(address indexed _user, uint256 _before, uint256 _after);
     event ChangeImage(address indexed _user, uint256 _index, bytes16 _before, bytes16 _after);
+    event ChangeImageOrder(address indexed _user, uint256 _oldOrder, uint256 _newOrder);
 }
