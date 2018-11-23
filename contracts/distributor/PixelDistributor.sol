@@ -43,7 +43,7 @@ contract PixelDistributor is ContractReceiver, ValidValue{
      */
     function receiveApproval(address _from, uint256 _value, address _token, bytes _data) public {
         require(address(this) != _from, "Purchase faild: Invalid buyer address.");
-        require(address(token) == _token, "Purchase faild: Invalid PIXEL token address.");
+        require(token == _token, "Purchase faild: Invalid PIXEL token address.");
         require(piction.validUser(_from), "Purchase faild: Invalid user, Please use piction after signing up..");
 
         address cd = _data.toAddress(0);
@@ -56,7 +56,7 @@ contract PixelDistributor is ContractReceiver, ValidValue{
 
         if(_value > 0) {
             //베타에서 픽셀 내역을 표기할지 확인 필요
-            CustomToken(address(token)).transferFromPxl(_from, address(this), _value, "에피소드 구매");
+            CustomToken(token).transferFromPxl(_from, address(this), _value, "에피소드 구매");
             _distributePurchaseTokens(IContents(contents).getOwner(), _from, cd, _value);
         }
     }
@@ -81,7 +81,7 @@ contract PixelDistributor is ContractReceiver, ValidValue{
 
         // contents provider
         CustomToken(token).transferPxl(_writer, remainToken, "Revenue from the sale of contents");
-        emit PixelDistribution(_cd, remainToken, _value, "Revenue from the sale of contents");
+        emit PixelDistribution(_writer, remainToken, _value, "Revenue from the sale of contents");
     }
 
     function _convertedToPixel(uint256 _amount, uint256 _rate) private pure returns (uint256) {
