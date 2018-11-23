@@ -50,7 +50,7 @@ contract PixelDistributor is ContractReceiver, ValidValue{
         address contents = _data.toAddress(20);
 
         require(piction.isContentsDistributor(cd), "Purchase faild: Invalid contents distributor address.");
-        require(piction.validContents(contents), "Purchase faild: Invalid contents address.");
+        //require(piction.validContents(contents), "Purchase faild: Invalid contents address.");
 
         IContents(contents).purchase(_from, _value);
 

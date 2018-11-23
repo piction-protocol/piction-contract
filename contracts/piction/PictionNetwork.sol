@@ -21,11 +21,12 @@ contract PictionNetwork is IProxy, Ownable, IPictionNetwork, ValidValue {
     address[] contentsDistributors;         // Contents Distributor 멤버 정보
     
     /**
-     * @dev 생성자
-     *
-     * @param _pxl Pixel token contract 주소
+     * @dev 사용하는 픽셀의 주소 등록
+     * Proxy를 사용하기위해 생성자에서 설정하지 않음
+     * 
+     * @param _pxl PXL 주소
      */
-    constructor (address _pxl) public validAddress(_pxl) {
+    function setPxlAddress(address _pxl) external onlyOwner validAddress(_pxl) {
         pxl = _pxl;
     }
 

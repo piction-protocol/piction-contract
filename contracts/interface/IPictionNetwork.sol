@@ -1,6 +1,7 @@
 pragma solidity ^0.4.24;
 
 contract IPictionNetwork {
+    function setPxlAddress(address _pxl) external;
     function validUser(address _user) external view returns(bool isValid_);
     function validContents(address _contents) external view returns(bool isValid_);
     function getCdRate() external view returns (uint256 rate_);

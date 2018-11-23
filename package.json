@@ -5,6 +5,7 @@
   "author": "",
   "scripts": {},
   "dependencies": {
+    "colors": "^1.3.2",
     "openzeppelin-solidity": "git+https://github.com/OpenZeppelin/openzeppelin-solidity.git",
     "web3": "^1.0.0-beta.34"
   },
