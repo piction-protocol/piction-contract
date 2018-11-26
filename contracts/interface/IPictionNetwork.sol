@@ -8,9 +8,9 @@ contract IPictionNetwork {
     function getPxlAddress() external view returns (address pxl_);
     function getPixelDistributor() external view returns (address distributor_);
     function getContentsDistributors() external view returns (address[] memory contentsDistributor_);
-    function isContentsDistributor(address _cd) external view returns (bool isContentsDistributor_);
+    function isContentsDistributor(address _cd) public view returns (bool isContentsDistributor_);
     function getCouncils() external view returns (address[] memory councils_);
-    function isCouncil(address _council) external view returns (bool isCouncil_);
+    function isCouncil(address _council) public view returns (bool isCouncil_);
     function addUser(address _user) external;
     function addContents(address _contents) external;
     function addContentsDistributors(address _contentsDistributor) external;
