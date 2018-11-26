@@ -43,13 +43,13 @@ contract PixelDistributor is ContractReceiver, ValidValue{
      */
     function receiveApproval(address _from, uint256 _value, address _token, bytes _data) public {
         require(token == _token, "Purchase faild: Invalid PIXEL token address.");
-        require(piction.validUser(_from), "Purchase faild: Invalid user, Please use piction after signing up.");
+        require(IPictionNetwork(piction).validUser(_from), "Purchase faild: Invalid user, Please use piction after signing up.");
 
         address cd = _data.toAddress(0);
         address contents = _data.toAddress(20);
 
-        require(piction.isContentsDistributor(cd), "Purchase faild: Invalid contents distributor address.");
-        require(piction.validContents(contents), "Purchase faild: Invalid contents address.");
+        require(IPictionNetwork(piction).isContentsDistributor(cd), "Purchase faild: Invalid contents distributor address.");
+        require(IPictionNetwork(piction).validContents(contents), "Purchase faild: Invalid contents address.");
 
         IContents(contents).purchase(_from, _value);
 
@@ -72,7 +72,7 @@ contract PixelDistributor is ContractReceiver, ValidValue{
         uint256 remainToken = _value;
 
         // contents distributor 
-        amount = _convertedToPixel(_value, piction.getCdRate());
+        amount = _convertedToPixel(_value, IPictionNetwork(piction).getCdRate());
         remainToken = remainToken.sub(amount);
         CustomToken(token).transferPxl(_cd, amount, "Contents Distributor fees");
         emit PixelDistribution(_cd, amount, _value, "Contents Distributor fees");
