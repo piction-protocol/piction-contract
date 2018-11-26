@@ -137,8 +137,9 @@ contract PictionNetwork is IProxy, Ownable, IPictionNetwork, ValidValue {
      *
      * @param _contents contents contract 주소
      */
-    function addContents(address _contents) external onlyOwner validAddress(_contents) {
-        //onlyOwner를 제외하고 추가로 예외처리 필요(미확정)
+    function addContents(address _contents) external validAddress(_contents) {
+        require(isOwner() || contents[msg.sender], "Add Contents failed: Access denied.");
+        
         contents[_contents] = true;
 
         emit AddContents(msg.sender, _contents);
