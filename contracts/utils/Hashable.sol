@@ -5,6 +5,7 @@ import "contracts/utils/ValidValue.sol";
 
 contract Hashable is Ownable, ValidValue {
     string hash;
+    uint256 version;
 
     function setHash(string _hash) public onlyOwner validString(_hash) {
         hash = _hash;
