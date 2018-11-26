@@ -1,19 +1,26 @@
 pragma solidity ^0.4.24;
 
+import "contracts/interface/IPictionNetwork.sol";
+
 import "contracts/utils/Hashable.sol";
 
 contract Comic is Hashable {
     
+    address piction;        //
     address[] episodes;     //Comic과 mapping 된 episode contract 주소
 
     /**
      * @dev 생성자
      *
      * @param _hash Comic의 정보를 사용하여 생성한 hash string
+     * @param _piction Piction network contract 주소
      */
-    constructor (string _hash) public {
+    constructor (string _hash, address _piction) public {
+        require(_piction != address(0) && _piction != address(this), "Comic contract creation failed: Invalid piction network address.");
+
         setHash(_hash);
-        
+        piction = _piction;
+
         emit CreateComic(msg.sender, _hash);
     }
 
@@ -23,6 +30,7 @@ contract Comic is Hashable {
      * @param _episode 배포가 완료 된 episode contract 주소
      */
     function addEpisode(address _episode) public onlyOwner validAddress(_episode) {
+        IPictionNetwork(piction).addContents(_episode);
         episodes.push(_episode);
 
         emit AddEpisode(msg.sender, _episode, (episodes.length - 1));
