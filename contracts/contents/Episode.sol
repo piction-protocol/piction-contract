@@ -10,11 +10,11 @@ contract Episode is Hashable, IEpisode {
 
     mapping (address => bool) purchasedUser;            // 구매 유저
 
-    uint256 price;          // 판매 금액
-    uint256 publishedTo;    // 공개 일자
+    uint256 price;          // 판매 금액(with DECIMALS)
+    uint256 publishedTo;    // 공개 일자(ms)
     bytes16[] images;       // 16 byte로 생성한 image hash
 
-    address piction;        // piction network contract 주소
+    address piction;        // Piction network proxy contract 주소
 
     /**
      * @dev 생성자
@@ -41,7 +41,7 @@ contract Episode is Hashable, IEpisode {
 
         price = _price;
         images = _images;
-        publishedTo = (TimeLib.currentTime() > _publishedTo)? TimeLib.currentTime() : _publishedTo;
+        publishedTo = _publishedTo;
 
         piction = _piction;
         
@@ -78,24 +78,20 @@ contract Episode is Hashable, IEpisode {
     /**
      * @dev 에피소드 전체 이미지 hash 조회
      *
-     * @notice msg.sender가 구매한 유저거나 컨트랙트 오너만 조회 가능
      * @return images_ 16 bytes로 생사한 이미지 hash 배열
      */
     function getImages() public view returns(bytes16[] images_) {
-        if(purchasedUser[msg.sender] || isOwner()){
-            images_ = images;
-        }
+        images_ = images;
     }
 
     /**
      * @dev 에피소드 이미지 컷 hash 조회
      *
-     * @notice msg.sender가 컨트랙트 오너만 조회 가능
      * @param _index 이미지 index
      * @return images_ 16 bytes로 생사한 이미지 hash
      */
     function getImage(uint256 _index) public view returns(bytes16 image_) {
-        if(isOwner() && images.length >= _index){
+        if(images.length > _index){
             image_ = images[_index];
         }
     }
@@ -115,7 +111,7 @@ contract Episode is Hashable, IEpisode {
      *
      * @param _price 설정할 pxl 양
      */
-    function setPrice(uint256 _price) public onlyOwner {
+    function setPrice(uint256 _price) external onlyOwner {
         emit ChangePrice(msg.sender, price, _price);
 
         price = _price;
@@ -124,13 +120,11 @@ contract Episode is Hashable, IEpisode {
     /**
      * @dev 에피소드 공개 시간 설정
      *
-     * @notice 변경하고자하는 시간이 현재시간보다 클때만 변경 가능
      * @param _publishedTo unix timestamp(ms) 형식의 공개 시간
      */
-    function setPublishedTo(uint256 _publishedTo) public onlyOwner {
-        require(TimeLib.currentTime() <= _publishedTo, "Failed to change release date: Check the release date.");
-
+    function setPublishedTo(uint256 _publishedTo) external onlyOwner {
         emit ChangeReleaseDate(msg.sender, publishedTo, _publishedTo);
+
         publishedTo = _publishedTo;
     }
 
@@ -140,8 +134,8 @@ contract Episode is Hashable, IEpisode {
      * @param _image 이미지 파일의 hash
      * @param _index 이미지 배열의 index
      */
-    function setImage(bytes16 _image, uint256 _index) public onlyOwner {
-        require(images.length >= _index, "Failed to change images: Check the image index");
+    function setImage(bytes16 _image, uint256 _index) external onlyOwner {
+        require(images.length > _index, "Failed to change images: Check the image index");
 
         emit ChangeImage(msg.sender, _index, images[_index], _image);
         images[_index] = _image;
@@ -152,7 +146,7 @@ contract Episode is Hashable, IEpisode {
      *
      * @param _images 이미지 파일의 hash 배열
      */
-    function setImages(bytes16[] _images) public onlyOwner {
+    function setImages(bytes16[] _images) external onlyOwner {
         require(_images.length > 0, "Failed to change images: Check the image");
 
         emit ChangeImages(msg.sender, images.length, _images.length);
@@ -165,7 +159,7 @@ contract Episode is Hashable, IEpisode {
      * @param _oldOrder 변경될 이미지 index
      * @param _newOrder 변경하고 싶은 이미지 index
      */
-    function changeImageOrder(uint256 _oldOrder, uint256 _newOrder) public onlyOwner {
+    function changeImageOrder(uint256 _oldOrder, uint256 _newOrder) external onlyOwner {
         require(_oldOrder < images.length, "Out of index: check oldOrder");
         require(_newOrder < images.length, "Out of index: check newOrder");
         require(_oldOrder != _newOrder, "Failed to change image order: Check the index");
@@ -190,6 +184,7 @@ contract Episode is Hashable, IEpisode {
         require(IPictionNetwork(piction).getPixelDistributor() == msg.sender, "Purchase failed: Access denied.");
         require(!purchasedUser[_user], "Purchase failed: Already purchased.");
         require(price == _price, "Purchase failed: Check the sales price.");
+        require(TimeLib.currentTime() >= publishedTo, "Purchase failed: Not published.");
 
         purchasedUser[_user] = true;
 
