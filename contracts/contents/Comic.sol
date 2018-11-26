@@ -6,7 +6,7 @@ import "contracts/utils/Hashable.sol";
 
 contract Comic is Hashable {
     
-    address piction;        //
+    address piction;        //Piction network proxy contract 주소
     address[] episodes;     //Comic과 mapping 된 episode contract 주소
 
     /**
@@ -27,6 +27,7 @@ contract Comic is Hashable {
     /**
      * @dev episode 추가 
      *
+     * @notice Piction network에 contents 주소 추가
      * @param _episode 배포가 완료 된 episode contract 주소
      */
     function addEpisode(address _episode) public onlyOwner validAddress(_episode) {
