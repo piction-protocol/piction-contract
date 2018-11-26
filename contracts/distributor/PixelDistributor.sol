@@ -21,16 +21,16 @@ contract PixelDistributor is ContractReceiver, ValidValue{
     uint256 public constant DECIMALS = 10 ** 18;        // Pixel token decimals
 
     address token;                                      // Pixel token address
-    IPictionNetwork piction;                            // Piction network contract address
+    address piction;                                    // Piction network proxy contract address
 
     /**
      * @dev 생성자
      *
-     * @param _piction piction network contract
+     * @param _piction Piction network proxy contract address
      */
     constructor(address _piction) public validAddress(_piction) {
-        piction = IPictionNetwork(_piction);
-        token = piction.getPxlAddress();
+        piction = _piction;
+        token = IPictionNetwork(piction).getPxlAddress();
     }
 
     /**
@@ -42,9 +42,8 @@ contract PixelDistributor is ContractReceiver, ValidValue{
      * @param _data bytes로 구성된 파라미터(contents distributor 주소, 판매 된 contents 주소)
      */
     function receiveApproval(address _from, uint256 _value, address _token, bytes _data) public {
-        require(address(this) != _from, "Purchase faild: Invalid buyer address.");
         require(token == _token, "Purchase faild: Invalid PIXEL token address.");
-        require(piction.validUser(_from), "Purchase faild: Invalid user, Please use piction after signing up..");
+        require(piction.validUser(_from), "Purchase faild: Invalid user, Please use piction after signing up.");
 
         address cd = _data.toAddress(0);
         address contents = _data.toAddress(20);
@@ -55,8 +54,7 @@ contract PixelDistributor is ContractReceiver, ValidValue{
         IContents(contents).purchase(_from, _value);
 
         if(_value > 0) {
-            //베타에서 픽셀 내역을 표기할지 확인 필요
-            CustomToken(token).transferFromPxl(_from, address(this), _value, "에피소드 구매");
+            CustomToken(token).transferFromPxl(_from, address(this), _value, "Purchase contents");
             _distributePurchaseTokens(IContents(contents).getOwner(), _from, cd, _value);
         }
     }
@@ -64,9 +62,9 @@ contract PixelDistributor is ContractReceiver, ValidValue{
     /**
      * @dev 분배 내역 계산 및 토큰 전송을 처리하는 내부 함수
      *
-     * @param _writer contents provider 주소
-     * @param _buyer 구매자 주소
-     * @param _cd contents distributor 조수
+     * @param _writer contents provider address
+     * @param _buyer buyer address
+     * @param _cd contents distributor address
      * @param _value contents 판매 금액
      */
     function _distributePurchaseTokens(address _writer, address _buyer, address _cd, uint256 _value) private {
