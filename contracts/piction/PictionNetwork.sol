@@ -1,13 +1,11 @@
 pragma solidity ^0.4.24;
 
-import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
-
 import "contracts/interface/IProxy.sol";
 import "contracts/interface/IPictionNetwork.sol";
 
 import "contracts/utils/ValidValue.sol";
 
-contract PictionNetwork is IProxy, Ownable, IPictionNetwork, ValidValue {
+contract PictionNetwork is IProxy, IPictionNetwork, ValidValue {
 
     mapping(address => bool) users;         // piction network에 등록한 유저 지갑 주소
     mapping(address => bool) contents;      // piction network에 등록한 콘텐츠 컨트렉트 주소
@@ -88,7 +86,7 @@ contract PictionNetwork is IProxy, Ownable, IPictionNetwork, ValidValue {
      * @param _cd Contents Distributor 주소
      * @return isContentsDistributor_ 멤버 여부
      */
-    function isContentsDistributor(address _cd) external view returns (bool isContentsDistributor_) {
+    function isContentsDistributor(address _cd) public view returns (bool isContentsDistributor_) {
         for(uint256 i = 0 ; i < contentsDistributors.length ; i++){
             if(contentsDistributors[i] == _cd) {
                 isContentsDistributor_ = true;
@@ -126,7 +124,7 @@ contract PictionNetwork is IProxy, Ownable, IPictionNetwork, ValidValue {
      * @param _user 유저의 지갑 주소
      */
     function addUser(address _user) external onlyOwner validAddress(_user) {
-        //onlyOwner를 제외하고 추가로 예외처리 필요(미확정)
+        // 추가 예외처리가 필요한지 논의
         users[_user] = true;
 
         emit AddUser(msg.sender, _user);
@@ -151,7 +149,9 @@ contract PictionNetwork is IProxy, Ownable, IPictionNetwork, ValidValue {
      * @param _contentsDistributor contents distributor로 등록할 지갑 주소
      */
     function addContentsDistributors(address _contentsDistributor) external onlyOwner validAddress(_contentsDistributor) {
-        //contents distributor로 등록할수 있는 권한을 확인하는 로직 추가 필요(미확정)
+        // 추가 예외처리가 필요한지 논의
+        // 멤버에서 제외될 경우 처리 논의 필요
+        require(!isContentsDistributor(_contentsDistributor), "Add contents distributor failed: Already address.");
         contentsDistributors.push(_contentsDistributor);
 
         emit AddContentsDistributor(msg.sender, _contentsDistributor, contentsDistributors.length);
@@ -163,7 +163,9 @@ contract PictionNetwork is IProxy, Ownable, IPictionNetwork, ValidValue {
      * @param _council council로 등록할 지갑 주소
      */
     function addCouncils(address _council) external onlyOwner validAddress(_council) {
-        //위원회로 등록할수 있는 권한을 확인하는 로직 추가 필요(미확정)
+        // 추가 예외처리가 필요한지 논의
+        // 멤버에서 제외될 경우 처리 논의 필요
+        require(!isCouncil(_council), "Add councils failed: Already address.");
         councils.push(_council);
 
         emit AddCouncils(msg.sender, _council, councils.length);
