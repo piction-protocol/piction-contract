@@ -312,6 +312,14 @@ contract("Piction contract test", async function (accounts){
         console.log("\t" + colors.bgWhite.black("\t==================== Purchase check start ====================\t"));
         console.log();
 
+        let userValue = await pxl.balanceOf.call(user, {from: user});
+        console.log("\t" + colors.magenta(" Purchase befor user: " + userValue.toNumber()));
+        let cdValue = await pxl.balanceOf.call(cd, {from: cd});
+        console.log("\t" + colors.magenta(" Purchase befor cd:" + cdValue.toNumber()));
+        let cpValue = await pxl.balanceOf.call(cp, {from: cp});
+        console.log("\t" + colors.magenta(" Purchase befor cp: " + cpValue.toNumber()));
+
+        console.log("\t" + colors.gray(" Purchase...:"+newPrice.toNumber()));
         await pxl.approveAndCall(
             distributor.address,
             newPrice,
@@ -319,7 +327,17 @@ contract("Piction contract test", async function (accounts){
             {from: user}
         );
 
-        // check 
+        result = await pxl.balanceOf.call(user, {from: user});
+        result.should.be.bignumber.equal(userValue-newPrice);
+        console.log("\t" + colors.magenta(" Purchase after user: " + result.toNumber()));
+        result = await pxl.balanceOf.call(cd, {from: cd});
+        result.should.be.bignumber.equal(newPrice * cdRate);
+        console.log("\t" + colors.magenta(" Purchase after cd: " + result.toNumber()));
+        result = await pxl.balanceOf.call(cp, {from: cp});
+        result.should.be.bignumber.equal(newPrice - (newPrice * cdRate));
+        console.log("\t" + colors.magenta(" Purchase after cp: " + result.toNumber()));
+        
+        console.log("")
 
         console.log();
         console.log("\t" + colors.bgWhite.black("\t===================== Purchase check end =====================\t"));
