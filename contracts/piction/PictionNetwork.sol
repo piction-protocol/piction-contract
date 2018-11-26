@@ -110,7 +110,7 @@ contract PictionNetwork is IProxy, IPictionNetwork, ValidValue {
      * @param _council 지갑 주소
      * @return isCouncil_ 등록 여부
      */
-    function isCouncil(address _council) external view returns (bool isCouncil_) {
+    function isCouncil(address _council) public view returns (bool isCouncil_) {
         for(uint256 i = 0 ; i < councils.length ; i++){
             if(councils[i] == _council) {
                 isCouncil_ = true;
