@@ -1,5 +1,8 @@
 pragma solidity ^0.4.24;
 
-contract IProxy {
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+
+contract IProxy is Ownable{
+    uint256 version;
     address targetAddress;
 }
