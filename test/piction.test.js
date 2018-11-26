@@ -154,7 +154,7 @@ contract("Piction contract test", async function (accounts){
         console.log("\t" + colors.bgWhite.black("\t==================== Deploying comic contract start ====================\t"));
         console.log();
 
-        comic = await Comic.new(comicHash, {from: cp});
+        comic = await Comic.new(comicHash, proxy.address, {from: cp});
         console.log("\t" + colors.magenta(" Comic address: " + comic.address));
 
         console.log();
