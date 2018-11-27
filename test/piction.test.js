@@ -99,6 +99,10 @@ contract("Piction contract test", async function (accounts){
         result.should.be.equal(piction.address);
         console.log("\t" + colors.magenta(" Proxy target address: " + result));
 
+        result = await proxy.getVersion.call();
+        result.should.be.bignumber.equal(1);
+        console.log("\t" + colors.magenta(" Proxy version: " + result.toNumber()));
+
         console.log();
         console.log("\t" + colors.bgWhite.black("\t===================== Setting proxy end =====================\t"));
         console.log();
