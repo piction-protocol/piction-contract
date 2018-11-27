@@ -234,7 +234,7 @@ contract("Piction contract test", async function (accounts){
         result = await episode.getPublishedTo.call();
         console.log("\t" + colors.magenta(" Origin episode Published To: " + result));
 
-        let time = Date.now()+15000;
+        let time = Date.now();
         console.log("\t" + colors.gray(" Time now: "+time));
         await episode.setPublishedTo(time, {from: admin}).should.be.rejected;
         await episode.setPublishedTo(time, {from: cp}).should.be.fulfilled;
